@@ -1,1 +1,41 @@
 #All notes
+#
+----START----
+
+
+
+#change into a correct namespace (context)
+----START----
+
+kubectl config use-context <name_of_cluster>
+
+
+
+#how to verify if a node is ready to run normal workloads
+----START----
+
+kubectl get nodes //here you can list nodes, but it's not enough
+kubectl describe node <nameofnodes_yououtputted> //in "taint" it should have none to be ready
+k describe node acgk8s-worker1 | grep -i "taint" //filtered version
+
+
+
+#how to verify if a node is ready to run normal workloads
+----START----
+
+kubectl get nodes //here you can list nodes, but it's not enough
+kubectl describe node <nameofnodes_yououtputted> //in "taint" it should have none to be ready
+k describe node acgk8s-worker1 | grep -i "taint" //filtered version using grep
+
+#quickly save smth into txt
+----START----
+echo "2" > /file_path_wheretowrite
+
+#check logs in specific <namespace> <pod> <container>
+----START----
+k logs -n  <namespace> <pod> -c <container>
+
+
+#find out which pod using most cpu in specifx namespace, sorting by cpu filtering by label
+----START----
+kubectl top pod -n web --sort-by cpu --selector app=auth
