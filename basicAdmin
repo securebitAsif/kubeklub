@@ -39,3 +39,57 @@ k logs -n  <namespace> <pod> -c <container>
 #find out which pod using most cpu in specifx namespace, sorting by cpu filtering by label
 ----START----
 kubectl top pod -n web --sort-by cpu --selector app=auth
+
+
+/*++++Lab2++++*/
+
+kubectl get services
+kubectl edit service 'kubernetes'
+
+#creating a service with specific nodeport enabled on specific deployment in namespace in node
+----START----
+vi web-frontend-svc.yml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-frontend-svc
+  namespace: web
+spec:
+type:NodePort
+  selector: 
+    app: web-deployment
+  ports:
+    -protocol: TCP
+    -port: 80
+    -nodePort: 30080
+
+kubectl create -f web-frontend.yml
+
+
+Create a web-frontend-ingress file:
+
+vi web-frontend-ingress.yml
+Define an Ingress in the YAML document:
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web-frontend-ingress
+  namespace: web
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: web-frontend-svc
+            port:
+              number: 80
+Press Esc and enter :wq to save and exit.
+
+Create the Ingress:
+
+kubectl create -f web-frontend-ingress.yml
