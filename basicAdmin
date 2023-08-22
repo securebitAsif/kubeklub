@@ -41,6 +41,12 @@ k logs -n  <namespace> <pod> -c <container>
 kubectl top pod -n web --sort-by cpu --selector app=auth
 
 
+
+
+
+
+
+
 /*++++Lab2++++*/
 
 kubectl get services
@@ -95,6 +101,11 @@ Create the Ingress:
 kubectl create -f web-frontend-ingress.yml
 
 
+
+
+
+
+
 /*++++Lab4++++*/
 #backing up etcd
 ----START----
@@ -128,5 +139,57 @@ sudo ETCDCTL_API=3 etcdctl get cluster.name  \
 --initial-advertise-peer-urls etcd-restore=https://etcd1:2380 \ //peer url
 --name etcd-restore \
 --data-dir /var/lib/etcd
+
+
+
+
+
+
+/*++++Lab5++++*/
+//upgrade kubernetes servers
+----START----
+
+//upgrade workernodes
+kubectl drain k8s-worker1 --ignore-daemonsets --force //run from control plane
+
+//in worker1 we want to perform the upt get install
+sudo apt-get install -y --allow-change-held-packages kubeadm=1.27.2-00   //(should match our control node)
+
+/check version
+kubeadm version
+
+//upgrade version
+kubeadm version 
+
+//kubelet and kubectl are upgraded to the same version:
+sudo apt-get install -y --allow-change-held-packages kubelet=1.27.2-00 kubectl=1.27.2-00
+
+//restart kubelet
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+
+
+//in control plane uncordon worker1
+kubectl uncordon k8s-worker1
+
+//confirm it
+kubectl get nodes
+
+//same procedure with second one:
+
+kubectl drain k8s-worker2 ignore-daemonsets --force
+sudo apt-get install -y --allow-change-help-packages kubeadm=1.27.2-00
+kubeadm version
+sudo kubeadm upgrade node
+sudo apt-get update &&\
+sudo apt-get install -y allow-change held-packages kubelet=1.27.2-00 kubectl=1.27.2-00
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+kubectl uncordon k8s-worker2
+kubectl get nodes
+
+
+
+
 
 
