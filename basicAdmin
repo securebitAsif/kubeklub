@@ -93,3 +93,40 @@ Press Esc and enter :wq to save and exit.
 Create the Ingress:
 
 kubectl create -f web-frontend-ingress.yml
+
+
+/*++++Lab4++++*/
+#backing up etcd
+----START----
+
+//SSH into etcd server
+//inside the etcd directory we have the etcd certificates
+
+ETCDCTL_API=3 etcdctl snapshot save /home/cloud_user/etcd_backub.db \
+--endpoints=https://etcd1:2379 \
+--cacert=/home/..../.crt
+--key=/home/.../.key
+
+//in order to backup etcd we must stop etcd and then restore
+sudo systemctl stop etcd //stops
+sudo rm -rf /var/lib/etcd
+
+//restore
+sudo ETCDCTL_API=3 etcdctl snapshot restore /home/cloud_user/etcd_backup.db \
+--initial-cluster etcd-restore=https://etcd1:2380 \     //initial cluster value for temp etcd
+--initial-advertise-peer-urls etcd-restore=https://etcd1:2380 \ //peer url
+--name etcd-restore \
+--data-dir /var/lib/etcd
+
+//next I need to make etcd (user and group) own this directory:
+sudo chown -R etcd:etcd /var/lib/etcd
+sudp systemctl start etcd
+
+
+sudo ETCDCTL_API=3 etcdctl get cluster.name  \
+--initial-cluster etcd-restore=https://etcd1:2380 \     //initial cluster value for temp etcd
+--initial-advertise-peer-urls etcd-restore=https://etcd1:2380 \ //peer url
+--name etcd-restore \
+--data-dir /var/lib/etcd
+
+
