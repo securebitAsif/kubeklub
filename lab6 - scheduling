@@ -1,0 +1,94 @@
+//================================================================================
+// Context
+//================================================================================
+This question uses the acgk8s cluster. After logging in to the exam server, switch
+to the correct context with the command kubectl config use-context acgk8s.
+
+Each of the objectives represents a task which you will need to complete using 
+the available cluster and server(s). Read each objective carefully and complete 
+the task specified.
+
+For some objectives, you may need to ssh into other nodes or servers from the exam 
+server. You can do so using the hostname/node name, i.e. ssh acgk8s-worker1.
+
+Note: You cannot ssh into another node, or use kubectl to connect to the cluster, 
+from any node other than the root node. Once you have completed the necessary 
+tasks on a server, be sure to exit and return to the root node before proceeding.
+
+If you need to assume root privileges on a server, you can do so with sudo -i.
+
+You can run the verification script located at /home/cloud_user/verify.sh at any 
+time to check your work!
+
+
+//================================================================================
+// Task 1
+//================================================================================
+
+/* ------------------------------- Description ------------------------------ */
+# Drain Worker Node 1
+Drain the acgk8s-worker1 node.
+Note: Note that you may run into issues with this process. If you do, use the 
+appropriate command-line flags to force the drain process to proceed anyway.
+
+/* --------------------------------- Action --------------------------------- */
+# Drain the Worker1 Node
+//1 Switch to the acgk8s context:
+kubectl config use-context acgk8s
+
+//2 Attempt to drain the worker1 node:
+kubectl drain acgk8s-worker1
+
+//3 Does the node drain successfully?
+
+//4 Override the errors and drain the node:
+kubectl drain acgk8s-worker1 --delete-local-data --ignore-daemonsets --force
+
+//5 Check the status of the exam objectives:
+./verify.sh
+
+//================================================================================
+// Task 2
+//================================================================================
+
+/* ------------------------------- Description ------------------------------ */
+# Create a Pod That Will Only Be Scheduled on Nodes with a Specific Label
+Add the disk=fast label to the acgk8s-worker2 Node.
+
+Create a pod called fast-nginx in the dev namespace that will only run on nodes 
+with this label. Use the nginx image for this pod.
+
+/* --------------------------------- Action --------------------------------- */
+# Create a Pod That Will Only Be Scheduled on Nodes with a Specific Label
+
+//1 Add the disk=fast label to the worker2 node:
+kubectl label nodes acgk8s-worker2 disk=fast
+
+//2 Create a YAML file named fast-nginx.yml:
+vim fast-nginx.yml
+
+//3 In the file, paste the following:
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fast-nginx
+  namespace: dev
+spec:
+  nodeSelector:
+    disk: fast
+  containers:
+  - name: nginx
+    image: nginx
+
+//4 Save the file:
+//   Press Esc and enter :wq to save and exit.
+
+//5 Create the fast-nginx pod:
+kubectl create -f fast-nginx.yml
+
+//6 Check the status of the pod:
+kubectl get pod fast-nginx -n dev -o wide
+
+//7 Check the status of the exam objectives:
+./verify.sh
+
