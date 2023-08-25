@@ -3,17 +3,24 @@
 //================================================================================
 // Context
 //================================================================================
-This question uses the acgk8s cluster. After logging in to the exam server, switch to the correct context with the command kubectl config use-context acgk8s.
+This question uses the acgk8s cluster. After logging in to the exam server, switch
+to the correct context with the command kubectl config use-context acgk8s.
 
-Each of the objectives represents a task which you will need to complete using the available cluster and server(s). Read each objective carefully and complete the task specified.
+Each of the objectives represents a task which you will need to complete using the
+available cluster and server(s). Read each objective carefully and complete the
+task specified.
 
-For some objectives, you may need to ssh into other nodes or servers from the exam server. You can do so using the hostname/node name (i.e., ssh acgk8s-worker1).
+For some objectives, you may need to ssh into other nodes or servers from the 
+exam server. You can do so using the hostname/node name (i.e., ssh acgk8s-worker1).
 
-Note: You cannot ssh into another node, or use kubectl to connect to the cluster, from any node other than the root node. Once you have completed the necessary tasks on a server, be sure to exit and return to the root node before proceeding.
+Note: You cannot ssh into another node, or use kubectl to connect to the cluster, 
+from any node other than the root node. Once you have completed the necessary 
+tasks on a server, be sure to exit and return to the root node before proceeding.
 
 If you need to assume root privileges on a server, you can do so with sudo -i.
 
-You can run the verification script located at /home/cloud_user/verify.sh at any time to check your work!
+You can run the verification script located at /home/cloud_user/verify.sh at
+any time to check your work!
 
 
 //================================================================================
