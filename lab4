@@ -1,0 +1,80 @@
+
+//================================================================================
+// Context
+//================================================================================
+Each of the objectives represents a task which you will need to complete using the available cluster and server(s). Read each objective carefully and complete the task specified.
+
+For this question, you will need to ssh into the ectd1 server. You can do so using the hostname (i.e., ssh etcd1). When referencing etcd1, use the hostname etcd1 and not localhost.
+
+Note: You cannot ssh into another node from any node other than the root node. Once you have completed the necessary tasks on a server, be sure to exit and return to the root node before proceeding.
+
+If you need to assume root privileges on a server, you can do so with sudo -i.
+
+You can run the verification script located at /home/cloud_user/verify.sh on the etcd1 server at any time to check your work!
+
+
+
+//================================================================================
+// Task 1
+//================================================================================
+/* ------------------------------- Description ------------------------------ */
+Back Up the etcd Data
+
+From the exam server, log in to the etcd1 server and back up the etcd data to a file located at /home/cloud_user/etcd_backup.db.
+
+Note: On the etcd1 server, you can find certificates which you can use to authenticate with etcd in /home/cloud_user/etcd-certs.
+
+/* --------------------------------- Action --------------------------------- */
+# Back Up the etcd Data
+//1 From the terminal, log in to the etcd server:
+ssh etcd1
+
+//2 Back up the etcd data:
+
+ETCDCTL_API=3 etcdctl snapshot save /home/cloud_user/etcd_backup.db \
+--endpoints=https://etcd1:2379 \
+--cacert=/home/cloud_user/etcd-certs/etcd-ca.pem \
+--cert=/home/cloud_user/etcd-certs/etcd-server.crt \
+--key=/home/cloud_user/etcd-certs/etcd-server.key
+
+
+//================================================================================
+// Task 2
+//================================================================================
+/* ------------------------------- Description ------------------------------ */
+Restore the etcd Data from the Backup
+
+On the etcd1 server, restore your etcd data from the backup file at /home/cloud_user/etcd_backup.db.
+
+/* --------------------------------- Action --------------------------------- */
+# Restore the etcd Data from the Backup
+
+//1 Stop etcd:
+sudo systemctl stop etcd
+
+//3 Delete the existing etcd data:
+sudo rm -rf /var/lib/etcd
+
+//4 Restore etcd data from a backup:
+
+sudo ETCDCTL_API=3 etcdctl snapshot restore /home/cloud_user/etcd_backup.db \
+--initial-cluster etcd-restore=https://etcd1:2380 \
+--initial-advertise-peer-urls https://etcd1:2380 \
+--name etcd-restore \
+--data-dir /var/lib/etcd
+
+//5 Set database ownership:
+sudo chown -R etcd:etcd /var/lib/etcd
+
+//6 Start etcd:
+sudo systemctl start etcd
+
+//7 Verify the system is working:
+
+ETCDCTL_API=3 etcdctl get cluster.name \
+--endpoints=https://etcd1:2379 \
+--cacert=/home/cloud_user/etcd-certs/etcd-ca.pem \
+--cert=/home/cloud_user/etcd-certs/etcd-server.crt \
+--key=/home/cloud_user/etcd-certs/etcd-server.key
+
+
