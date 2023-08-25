@@ -2,16 +2,22 @@
 //================================================================================
 // Context
 //================================================================================
-Each of the objectives represents a task which you will need to complete using the available cluster and server(s). Read each objective carefully and complete the task specified.
+Each of the objectives represents a task which you will need to complete using the 
+available cluster and server(s). Read each objective carefully and complete the 
+task specified.
 
-For this question, you will need to ssh into the ectd1 server. You can do so using the hostname (i.e., ssh etcd1). When referencing etcd1, use the hostname etcd1 and not localhost.
+For this question, you will need to ssh into the ectd1 server. You can do so 
+using the hostname (i.e., ssh etcd1). When referencing etcd1, use the hostname 
+etcd1 and not localhost.
 
-Note: You cannot ssh into another node from any node other than the root node. Once you have completed the necessary tasks on a server, be sure to exit and return to the root node before proceeding.
+Note: You cannot ssh into another node from any node other than the root node. 
+Once you have completed the necessary tasks on a server, be sure to exit and
+return to the root node before proceeding.
 
 If you need to assume root privileges on a server, you can do so with sudo -i.
 
-You can run the verification script located at /home/cloud_user/verify.sh on the etcd1 server at any time to check your work!
-
+You can run the verification script located at /home/cloud_user/verify.sh on
+the etcd1 server at any time to check your work!
 
 
 //================================================================================
@@ -20,9 +26,11 @@ You can run the verification script located at /home/cloud_user/verify.sh on the
 /* ------------------------------- Description ------------------------------ */
 Back Up the etcd Data
 
-From the exam server, log in to the etcd1 server and back up the etcd data to a file located at /home/cloud_user/etcd_backup.db.
+From the exam server, log in to the etcd1 server and back up the etcd data to a 
+file located at /home/cloud_user/etcd_backup.db.
 
-Note: On the etcd1 server, you can find certificates which you can use to authenticate with etcd in /home/cloud_user/etcd-certs.
+Note: On the etcd1 server, you can find certificates which you can use to 
+authenticate with etcd in /home/cloud_user/etcd-certs.
 
 /* --------------------------------- Action --------------------------------- */
 # Back Up the etcd Data
@@ -44,7 +52,8 @@ ETCDCTL_API=3 etcdctl snapshot save /home/cloud_user/etcd_backup.db \
 /* ------------------------------- Description ------------------------------ */
 Restore the etcd Data from the Backup
 
-On the etcd1 server, restore your etcd data from the backup file at /home/cloud_user/etcd_backup.db.
+On the etcd1 server, restore your etcd data from the backup file 
+at /home/cloud_user/etcd_backup.db.
 
 /* --------------------------------- Action --------------------------------- */
 # Restore the etcd Data from the Backup
