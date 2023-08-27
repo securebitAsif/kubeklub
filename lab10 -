@@ -1,0 +1,92 @@
+//================================================================================
+// Context
+//================================================================================
+This question uses the acgk8s cluster. After logging in to the exam server, 
+switch to the correct context with the command kubectl config use-context acgk8s.
+
+Each of the objectives represents a task which you will need to complete using 
+the available cluster and server(s). Read each objective carefully and complete 
+the task specified.
+
+For some objectives, you may need to ssh into other nodes or servers from the 
+exam server. You can do so using the hostname/node name, i.e. ssh acgk8s-worker1.
+
+Note: You cannot ssh into another node, or use kubectl to connect to the cluster
+, from any node other than the root node. Once you have completed the necessary 
+tasks on a server, be sure to exit and return to the root node before proceeding.
+
+If you need to assume root privileges on a server, you can do so with sudo -i.
+
+You can run the verification script located at /home/cloud_user/verify.sh 
+at any time to check your work!
+
+
+//================================================================================
+// Task 1
+//================================================================================
+
+/* ------------------------------- Description ------------------------------ */
+# Determine What Is Wrong with the Broken Node
+Something is wrong with one of the nodes in the cluster. Explore the cluster and 
+determine which Node is broken, then save the name of that node to the 
+file /k8s/0004/broken-node.txt.
+Explore the broken Node and determine what is wrong with it.
+
+/* --------------------------------- Action --------------------------------- */
+# Determine What Is Wrong with the Broken Node
+//1 Switch to the acgk8s context:
+kubectl config use-context acgk8s
+
+//2 Check the current status of the nodes:
+kubectl get nodes
+
+//3 Identify the broken node and save the name to a file named broken-node.txt:
+echo acgk8s-worker2 > /k8s/0004/broken-node.txt
+
+//4 Attempt to determine the cause of the issue:
+kubectl describe node acgk8s-worker2
+
+
+
+//================================================================================
+// Task 2
+//================================================================================
+
+/* ------------------------------- Description ------------------------------ */
+# Fix the Problem
+Fix the problem with the broken node so that it becomes READY again.
+
+/* --------------------------------- Action --------------------------------- */
+# Fix the Problem
+//1 Access the node using ssh:
+ssh acgk8s-worker2
+
+//2 Check the kubelet log:
+sudo journalctl -u kubelet
+
+//3 Check the last entry in the log.
+
+//4 Check the kubelet status:
+sudo systemctl status kubelet
+
+//5 Enable kubelet:
+sudo systemctl enable kubelet
+
+//6 Start kubelet:
+sudo systemctl start kubelet
+
+//7 Verify that kubelet started successfully:
+sudo systemctl status kubelet
+
+//8 Return to the control plane node:
+exit
+
+//9 Check the status of the nodes:
+kubectl get nodes
+
+//10 Check the status of the exam objectives:
+./verify.sh
+
+
+
+
