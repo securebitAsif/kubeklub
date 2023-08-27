@@ -1,0 +1,120 @@
+//================================================================================
+// Context
+//================================================================================
+This question uses the acgk8s cluster. After logging in to the exam server, 
+switch to the correct context with the command kubectl config use-context acgk8s.
+
+Each of the objectives represents a task which you will need to complete using 
+the available cluster and server(s). Read each objective carefully and complete 
+the task specified.
+
+For some objectives, you may need to ssh into other nodes or servers from the 
+exam server. You can do so using the hostname/node name, i.e. ssh acgk8s-worker1.
+
+Note: You cannot ssh into another node, or use kubectl to connect to the cluster,
+from any node other than the root node. Once you have completed the necessary 
+tasks on a server, be sure to exit and return to the root node before proceeding.
+
+If you need to assume root privileges on a server, you can do so with sudo -i.
+
+You can run the verification script located at /home/cloud_user/verify.sh at 
+any time to check your work!
+
+
+//================================================================================
+// Task 1
+//================================================================================
+
+/* ------------------------------- Description ------------------------------ */
+# Create a NetworkPolicy That Denies All Access to the Maintenance Pod
+There is a pod called maintenance in the foo namespace. Create a NetworkPolicy
+that blocks all traffic to and from this pod.
+
+/* --------------------------------- Action --------------------------------- */
+# Create a Networkpolicy That Denies All Access to the Maintenance Pod
+//1 Switch to the acgk8s context:
+kubectl config use-context acgk8s
+
+//2 Check the foo namespace:
+kubectl get pods -n foo
+
+//3 Check the maintenance pod's labels:
+kubectl describe pod maintenance -n foo
+
+//4 Create a new YAML file named np-maintenance.yml:
+vim np-maintenance.yml
+
+//5 In the file, paste the following:
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: np-maintenance
+  namespace: foo
+spec:
+  podSelector:
+    matchLabels:
+      app: maintenance
+  policyTypes:
+  - Ingress
+  - Egress
+
+//6 Save the file:
+//   Press Esc and enter :wq to save and exit.
+
+//7 Create the NetworkPolicy:
+kubectl create -f np-maintenance.yml
+
+//8 Check the status of the exam objectives:
+./verify.sh
+
+//================================================================================
+// Task 2
+//================================================================================
+
+/* ------------------------------- Description ------------------------------ */
+# Create a NetworkPolicy That Allows All Pods in the Users-Backend Namespace 
+to Communicate with Each Other Only on a Specific Port
+
+There are some pods in the users-backend namespace. Create a NetworkPolicy 
+that blocks all traffic to pods in this namespace, except for traffic from pods 
+in the same namespace on port 80.
+
+/* --------------------------------- Action --------------------------------- */
+# Create a Networkpolicy That Allows All Pods in the users-backend Namespace to 
+Communicate with Each Other Only on a Specific Port
+
+//1 Label the users-backend namespace:
+kubectl label namespace users-backend app=users-backend
+
+//2 Create a YAML file named np-users-backend-80.yml:
+vim np-users-backend-80.yml
+
+//3 In the file, paste the following:
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: np-users-backend-80
+  namespace: users-backend
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          app: users-backend
+    ports:
+    - protocol: TCP
+      port: 80
+
+//4 Save the file:
+//   Press Esc and enter :wq to save and exit.
+
+//5 Create the NetworkPolicy:
+kubectl create -f np-users-backend-80.yml
+
+//6 Check the status of the exam objectives:
+./verify.sh
+
+
