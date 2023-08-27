@@ -1,0 +1,113 @@
+//================================================================================
+// Context
+//================================================================================
+This question uses the acgk8s cluster. After logging in to the exam server, 
+switch to the correct context with the command kubectl config use-context acgk8s.
+
+Each of the objectives represents a task which you will need to complete using 
+the available cluster and server(s). Read each objective carefully and complete 
+the task specified.
+
+For some objectives, you may need to ssh into other nodes or servers from the exam 
+server. You can do so using the hostname/node name, i.e. ssh acgk8s-worker1.
+
+Note: You cannot ssh into another node, or use kubectl to connect to the cluster, 
+from any node other than the root node. Once you have completed the necessary 
+tasks on a server, be sure to exit and return to the root node before proceeding.
+
+You can run the verification script located at /home/cloud_user/verify.sh at 
+any time to check your work!
+
+
+//================================================================================
+// Task 1
+//================================================================================
+
+/* ------------------------------- Description ------------------------------ */
+# Create a Multi-Container Pod
+Create a pod called multi in the baz namespace. Run two containers in this pod, with the following images (in order):
+nginx
+redis
+
+/* --------------------------------- Action --------------------------------- */
+# Create a Multi-Container Pod
+//1 Switch to the acgk8s context:
+kubectl config use-context acgk8s
+
+//2 Create a YAML file named multi.yml:
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multi
+  namespace: baz
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+  - name: redis
+    image: redis
+
+//3 Save the file:
+//   Press Esc and enter :wq to save and exit.
+
+//4 Create the multi-container pod:
+kubectl create -f multi.yml
+
+//5 Check the status of the pod:
+kubectl get pods -n baz
+
+//6 Check the status of the exam objectives:
+./verify.sh
+
+
+//================================================================================
+// Task 2
+//================================================================================
+
+/* ------------------------------- Description ------------------------------ */
+# Create a Pod Which Uses a Sidecar to Expose the Main Container's Log File to `stdout`
+Create a pod called logging-sidecar in the baz namespace.
+Run a container in this pod with the busybox image and the following 
+command: sh -c while true; do echo Logging data > /output/output.log; sleep 5; done.
+Add a second container called sidecar to the pod which also uses the busybox 
+image, and reads the output from the first container, as well as prints it 
+to the container log (console).
+
+
+/* --------------------------------- Action --------------------------------- */
+# Create a Pod Which Uses a Sidecar to Expose the Main Container's Log File to Stdout
+//1 Switch to the acgk8s context:
+kubectl config use-context acgk8s
+
+//2 Create a YAML file named multi.yml:
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multi
+  namespace: baz
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+  - name: redis
+    image: redis
+
+//3 Save the file:
+//   Press Esc and enter :wq to save and exit.
+
+//4 Create the multi-container pod:
+kubectl create -f multi.yml
+
+//5 Check the status of the pod:
+kubectl get pods -n baz
+
+//6 Check the status of the exam objectives:
+./verify.sh
+
+
+
+
+
+
+
+
