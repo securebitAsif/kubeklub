@@ -27,11 +27,14 @@ any time to check your work!
 
 /* ------------------------------- Description ------------------------------ */
 # Create a PersistentVolume
-Create a PersistentVolume called host-storage-pv with a storage capacity of 1Gi in the acgk8s context. Configure this PersistentVolume so that volumes that use it can be expanded in the future.
+Create a PersistentVolume called host-storage-pv with a storage capacity of 1Gi 
+in the acgk8s context. Configure this PersistentVolume so that volumes that use 
+it can be expanded in the future.
 Note: This may require you to create additional objects.
 
 Configure the PersistentVolume to use a hostPath for storage located at /etc/data.
-Configure the PersistentVolume so that it can be automatically reused if all claims are deleted.
+Configure the PersistentVolume so that it can be automatically reused if all claims 
+are deleted.
 
 
 /* --------------------------------- Action --------------------------------- */
