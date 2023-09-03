@@ -35,9 +35,10 @@ Configure the PersistentVolume so that it can be automatically reused if all cla
 
 
 /* --------------------------------- Action --------------------------------- */
+```shell
 # Create a PersistentVolume
 //1 Switch to the acgk8s context:
-kubectl config use-context acgk8s
+kubectl config use-context acgk8s 
 
 //2 Create a YAML file named localdisk.yml:
 vim localdisk.yml
@@ -86,7 +87,7 @@ kubectl get pv host-storage-pv
 //11 Check the status of the exam objectives:
 ./verify.sh
 
-
+```
 //================================================================================
 // Task 2
 //================================================================================
@@ -104,6 +105,8 @@ Mount the volume that uses the PersistentVolume for storage, such that the /outp
 
 
 /* --------------------------------- Action --------------------------------- */
+
+```shell
 # Create a Pod That Uses the PersistentVolume for Storage
 Sure, here's the sequence with the requested enumeration:
 
@@ -180,6 +183,8 @@ Feel free to use this enumeration in your documentation!
 Expand the PersistentVolumeClaim so that the requested storage size is 200Mi.
 
 /* --------------------------------- Action --------------------------------- */
+
+```shell
 # Expand the PersistentVolumeClaim
 //1 Edit host-storage-pvc:
 kubectl edit pvc host-storage-pvc -n auth
@@ -189,5 +194,5 @@ kubectl edit pvc host-storage-pvc -n auth
 
 //3 Check the status of the exam objectives:
 ./verify.sh
-
+```
 
