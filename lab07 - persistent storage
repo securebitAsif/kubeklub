@@ -35,7 +35,7 @@ Configure the PersistentVolume so that it can be automatically reused if all cla
 
 
 /* --------------------------------- Action --------------------------------- */
-```shell
+<details><summary>Answer</summary> ```shell
 # Create a PersistentVolume
 //1 Switch to the acgk8s context:
 kubectl config use-context acgk8s 
@@ -88,6 +88,7 @@ kubectl get pv host-storage-pv
 ./verify.sh
 
 ```
+</details>
 //================================================================================
 // Task 2
 //================================================================================
