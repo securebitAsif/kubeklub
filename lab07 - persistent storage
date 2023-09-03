@@ -111,8 +111,6 @@ command sh -c while true; do echo success > /output/output.log; sleep 5; done.
 Mount the volume that uses the PersistentVolume for storage, such that the 
 /output directory ultimately writes to the PersistentVolume.
 
-
-
 /* --------------------------------- Action --------------------------------- */
 # Create a Pod That Uses the PersistentVolume for Storage
 
@@ -185,8 +183,6 @@ kubectl create -f pv-pod.yml
 Expand the PersistentVolumeClaim so that the requested storage size is 200Mi.
 
 /* --------------------------------- Action --------------------------------- */
-
-
 # Expand the PersistentVolumeClaim
 //1 Edit host-storage-pvc:
 kubectl edit pvc host-storage-pvc -n auth
