@@ -73,38 +73,49 @@ Add a second container called sidecar to the pod which also uses the busybox
 image, and reads the output from the first container, as well as prints it 
 to the container log (console).
 
-
 /* --------------------------------- Action --------------------------------- */
 # Create a Pod Which Uses a Sidecar to Expose the Main Container's Log File to Stdout
 //1 Switch to the acgk8s context:
 kubectl config use-context acgk8s
 
-//2 Create a YAML file named multi.yml:
+//2 Create a YAML file named logging-sidecar.yml:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: multi
+  name: logging-sidecar
   namespace: baz
 spec:
   containers:
-  - name: nginx
-    image: nginx
-  - name: redis
-    image: redis
+  - name: busybox1
+    image: busybox
+    command: ['sh', '-c', 'while true; do echo Logging data > /output/output.log; sleep 5; done']
+    volumeMounts:
+    - name: sharedvol
+      mountPath: /output
+  - name: sidecar
+    image: busybox
+    command: ['sh', '-c', 'tail -f /input/output.log']
+    volumeMounts:
+    - name: sharedvol
+      mountPath: /input
+  volumes:
+  - name: sharedvol
+    emptyDir: {}
 
 //3 Save the file:
 //   Press Esc and enter :wq to save and exit.
 
-//4 Create the multi-container pod:
-kubectl create -f multi.yml
+//4 Create the logging-sidecar pod:
+kubectl create -f logging-sidecar.yml
 
 //5 Check the status of the pod:
 kubectl get pods -n baz
 
-//6 Check the status of the exam objectives:
+//6 Check the logging-sidecar logs:
+kubectl logs logging-sidecar -n baz -c sidecar
+
+//7 Check the status of the exam objectives:
 ./verify.sh
-
-
 
 
 
