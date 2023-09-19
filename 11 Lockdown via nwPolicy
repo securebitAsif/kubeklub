@@ -1,0 +1,66 @@
+//================================================================================
+// Context
+//================================================================================
+Your company, SecuriCorp, is using Kubernetes to run a variety of applications. 
+Recently, hackers have been trying various techniques to break into the Kubernetes 
+cluster and steal data. In this lab, you will make a Kubernetes cluster more secure 
+by using NetworkPolicies to restrict network traffic in the web-auth namespace.
+
+To start, log in to the server using the credentials provided: 
+ssh cloud_user@<PUBLIC_IP_ADDRESS>
+
+//================================================================================
+// Task 1
+//================================================================================
+
+/* ------------------------------- Description ------------------------------ */
+# Block Incoming Traffic by Default for All Pods in the web-auth Namespace
+
+/* --------------------------------- Action --------------------------------- */
+//1 Get Pods in the web-auth namespace:
+kubectl get pods -n web-auth
+
+//2 View the logs for the auth-client Pod:
+kubectl logs auth-client -n web-auth
+
+//3 Create a `default-deny-np.yml` manifest file and paste in the appropriate 
+NetworkPolicy:
+vi default-deny-np.yml
+
+(Note: Press Escape and enter `:wq` to save and exit.)
+
+//4 Create the NetworkPolicy:
+kubectl create -f default-deny-np.yml
+
+//5 Check the auth-client Pod logs again:
+kubectl logs auth-client -n web-auth
+
+(Note: You should receive a failure message "Failed to reach auth server!".)
+
+//================================================================================
+// Task 2
+//================================================================================
+
+/* ------------------------------- Description ------------------------------ */
+# Allow Traffic from the auth-client Pod to Reach the web-auth-server
+
+/* --------------------------------- Action --------------------------------- */
+//1 List the Pods with their labels in the web-auth namespace:
+kubectl get pods -n web-auth --show-labels
+
+//2 List the namespace with its label:
+kubectl get namespace web-auth --show-labels
+
+//3 Create an `auth-server-np.yml` manifest file for the NetworkPolicy and paste 
+in the appropriate content:
+vi auth-server-np.yml
+
+(Note: Press Escape and enter `:wq` to save and exit.)
+
+//4 Create the NetworkPolicy:
+kubectl create -f auth-server-np.yml
+
+//5 Check the auth-client logs again:
+kubectl logs auth-client -n web-auth
+
+(Note: You should now receive a success message "Successfully reached auth server!".)
