@@ -1,66 +1,129 @@
+plaintext
+
 //================================================================================
 // Context
 //================================================================================
-Your company, SecuriCorp, is using Kubernetes to run a variety of applications. 
-Recently, hackers have been trying various techniques to break into the Kubernetes 
-cluster and steal data. In this lab, you will make a Kubernetes cluster more secure 
-by using NetworkPolicies to restrict network traffic in the web-auth namespace.
 
-To start, log in to the server using the credentials provided: 
+Your company, SecuriCorp, uses Kubernetes to run various applications. Recently, 
+hackers have attempted to infiltrate the Kubernetes cluster to steal data. 
+
+Currently, all Pods in the cluster can interact over the cluster network. However, 
+only specific Pods need to communicate with certain microservices. A particular 
+pair of Pods in the web-auth namespace plays a significant role. The "auth-client" 
+Pod within this namespace must communicate with another Pod named "web-auth-server" 
+in the same namespace.
+
+In this lab, you will secure the Kubernetes cluster further by using NetworkPolicies. 
+This will restrict network traffic in the web-auth namespace, ensuring only essential 
+traffic flows.
+
+Start by logging into the server using the provided credentials: 
+```bash
 ssh cloud_user@<PUBLIC_IP_ADDRESS>
-
 //================================================================================
-// Task 1
+// Task 1: Block Incoming Traffic by Default for All Pods in the web-auth Namespace
 //================================================================================
 
-/* ------------------------------- Description ------------------------------ */
-# Block Incoming Traffic by Default for All Pods in the web-auth Namespace
+//1 Retrieve all Pods in the web-auth namespace:
 
-/* --------------------------------- Action --------------------------------- */
-//1 Get Pods in the web-auth namespace:
+#bash
+
 kubectl get pods -n web-auth
+//2 Examine the logs for the auth-client Pod:
 
-//2 View the logs for the auth-client Pod:
+#bash
+
 kubectl logs auth-client -n web-auth
+//3 Create a manifest file named "default-deny-np.yml":
 
-//3 Create a `default-deny-np.yml` manifest file and paste in the appropriate 
-NetworkPolicy:
+#bash
+
 vi default-deny-np.yml
+Insert the following NetworkPolicy into the file:
 
-(Note: Press Escape and enter `:wq` to save and exit.)
+#yaml
 
-//4 Create the NetworkPolicy:
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: web-auth
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+After inserting, press Escape and type :wq to save and exit.
+
+//4 Implement the NetworkPolicy:
+
+#bash
+
 kubectl create -f default-deny-np.yml
+//5 Review the auth-client Pod logs once again:
 
-//5 Check the auth-client Pod logs again:
+#bash
+
 kubectl logs auth-client -n web-auth
-
-(Note: You should receive a failure message "Failed to reach auth server!".)
+(Note: Expect a "Failed to reach auth server!" error message.)
 
 //================================================================================
-// Task 2
+// Task 2: Permit Traffic from the auth-client Pod to the web-auth-server
 //================================================================================
 
-/* ------------------------------- Description ------------------------------ */
-# Allow Traffic from the auth-client Pod to Reach the web-auth-server
+//1 Display all Pods and their labels in the web-auth namespace:
 
-/* --------------------------------- Action --------------------------------- */
-//1 List the Pods with their labels in the web-auth namespace:
+#bash
+
 kubectl get pods -n web-auth --show-labels
+//2 Showcase the namespace and its associated label:
 
-//2 List the namespace with its label:
+#bash
+
 kubectl get namespace web-auth --show-labels
+//3 Generate a manifest file named "auth-server-np.yml":
 
-//3 Create an `auth-server-np.yml` manifest file for the NetworkPolicy and paste 
-in the appropriate content:
+#bash
+
 vi auth-server-np.yml
+Insert the following NetworkPolicy into the file:
 
-(Note: Press Escape and enter `:wq` to save and exit.)
+#yaml
 
-//4 Create the NetworkPolicy:
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: auth-server-ingress
+  namespace: web-auth
+spec:
+  podSelector:
+    matchLabels:
+      app: auth-server
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          role: auth
+      podSelector:
+        matchLabels:
+          app: auth-client
+    ports:
+    - protocol: TCP
+      port: 80
+After inserting, press Escape and type :wq to save and exit.
+
+//4 Activate the NetworkPolicy:
+
+#bash
+
 kubectl create -f auth-server-np.yml
+//5 Inspect the auth-client logs one more time:
 
-//5 Check the auth-client logs again:
+#bash
+
 kubectl logs auth-client -n web-auth
+(Note: You should now observe the "Successfully reached auth server!" success message.)
 
-(Note: You should now receive a success message "Successfully reached auth server!".)
+
+
